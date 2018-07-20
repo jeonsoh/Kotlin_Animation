@@ -24,14 +24,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-      //  m_viewpager.adapter = myViewPagerAdapter(supportFragmentManager)
-        m_viewpager.adapter = myViewPagerAdapter(applicationContext)
+        m_viewpager.adapter = myViewPagerAdapter()
 
     }
 
-
-
-    class myViewPagerAdapter(context : Context) : PagerAdapter(){
+    class myViewPagerAdapter() : PagerAdapter(){
         //소분류
         var subBubble = listOf<smallItem>( smallItem(R.drawable.image1_bubble1,"image1_bubble1"),
                 smallItem(R.drawable.image1_bubble2, "image1_bubble2"),
@@ -54,48 +51,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            var view = LayoutInflater.from(container.context).inflate(R.layout.activity_viewpager_item, container, false)
-            view.m_viewpager_imageview.setImageResource(items[position].main_image)
+            var view = LayoutInflater.from(container.context).inflate(R.layout.activity_viewpager_item, container, false).apply {
+                m_viewpager_imageview.setImageResource(items[position].main_image)
+                m_textview_on_imageview.setText(items[position].main_text)
+            }
 
             var anim = AnimationUtils.loadAnimation(container.context, R.anim.zoom_in)
             view.m_viewpager_imageview.startAnimation(anim)
+
             container.addView(view)
             return view
         }
 
     }
-//    class myViewPagerAdapter(fm:FragmentManager) : FragmentStatePagerAdapter(fm){
-//
-//       // var fragments = arrayOf(Fragment1(), Fragment1(),Fragment1())
-//       //소분류
-//       var subBubble = listOf<smallItem>( smallItem(R.drawable.image1_bubble1,"image1_bubble1"),
-//               smallItem(R.drawable.image1_bubble2, "image1_bubble2"),
-//               smallItem(R.drawable.image1_bubble3,"image1_bubble3") )
-//        //대분류
-//        var bubble = bigItem(R.drawable.image1, "image1", subBubble)
-//
-//        var subBridge = listOf<smallItem>( smallItem(R.drawable.image2_bridge1, "image2_bridge1"),
-//                smallItem(R.drawable.image2_bridge2, "image2_bridge2") )
-//        var bridge = bigItem(R.drawable.image2, "image2", subBridge)
-//
-//        var items = arrayOf( bubble, bridge)
-//
-//
-//        override fun getItem(position: Int): Fragment {
-//            return Fragment1
-//
-//        }
-//
-//        override fun getCount(): Int {
-//            return  items.size
-//
-//        }
-//
-//        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-//            val view = LayoutInflater.from(this).inflate(R.layout.activity_viewpager_item, container, false)
-//
-//        }
-//    }
 
     data class bigItem(var main_image: Int, var main_text: String, var subitem: List<smallItem>)
     data class smallItem(var main_image: Int, var main_text: String)
