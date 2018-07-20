@@ -52,8 +52,9 @@ class MainActivity : AppCompatActivity() {
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             var view = LayoutInflater.from(container.context).inflate(R.layout.activity_viewpager_item, container, false).apply {
-                m_viewpager_imageview.setImageResource(items[position].main_image)
-                m_textview_on_imageview.setText(items[position].main_text)
+                m_viewpager_imageview.setImageResource(items[position].main_image) //head이미지
+                m_textview_on_imageview.setText(items[position].main_text) //기사 head
+                m_textview_on_slidingdrawer.setText(items[position].main_text) //기사 내용. 수정
             }
 
             var anim = AnimationUtils.loadAnimation(container.context, R.anim.zoom_in)
