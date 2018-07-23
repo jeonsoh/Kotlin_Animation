@@ -25,6 +25,26 @@
             android:textSize="30sp"
             android:textColor="#FFFFFF"
             />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@android:color/darker_gray"
+            android:orientation="horizontal"
+            android:id="@+id/m_pausedlayout"
+            android:visibility="invisible"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="#FFFFFF"
+                android:layout_centerInParent="true"
+                android:text="PAUSED"/>
+
+        </RelativeLayout>
+
+
     </FrameLayout>
 
     <SlidingDrawer
