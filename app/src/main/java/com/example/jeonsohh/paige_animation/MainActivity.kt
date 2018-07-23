@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     class myViewPagerAdapter() : PagerAdapter() {
         // var anim: Animation? = null
+        lateinit var anim_zoomin : AnimatorSet
 
         //소분류
         var subBubble = listOf<smallItem>(smallItem(R.drawable.image1_bubble1, "image1_bubble1"),
@@ -54,11 +55,13 @@ class MainActivity : AppCompatActivity() {
                 m_textview_on_slidingdrawer.setText(items[position].main_text) //기사 내용. 수정
             }
 
-            var anim_zoomin = AnimatorInflater.loadAnimator(container.context, R.animator.zoom_in) as AnimatorSet  //property animation방식
+            anim_zoomin = AnimatorInflater.loadAnimator(container.context, R.animator.zoom_in) as AnimatorSet  //property animation방식
             anim_zoomin.setTarget(view.m_viewpager_imageview)
             anim_zoomin.start()
 
-            view.m_viewpager_imageview.setOnTouchListener(object : View.OnTouchListener {
+            view.m_viewpager_imageview.setOnTouchListener { view, motionEvent -> GestureDetector(MyGestureListener()).onTouchEvent(motionEvent) }
+
+          /*  view.m_viewpager_imageview.setOnTouchListener(object : View.OnTouchListener {
                 override fun onTouch(v: View?, m: MotionEvent?): Boolean {
                     var cordx: Float? = null
                     var cordy: Float? = null
@@ -68,32 +71,23 @@ class MainActivity : AppCompatActivity() {
                     var touchslop: Int = ViewConfiguration.get(v!!.context).scaledTouchSlop //drag범위 인식하는 기본값
                     val longClickHandler = object : Handler() {
                         override fun handleMessage(msg: Message?) {
-                            println(" anim pause??????")
+                           // println(" anim pause??????")
                             anim_zoomin.pause()
                         }
                     }
-                  //  val longClickHandler = Handler()
-//                    val longClickRunnable =  object: Runnable {
-//                        override fun run() {
-//                            println(" anim pause??????")
-//                            anim_zoomin.pause()
-//                        }
-//                    }
 
                     when (m!!.action) {
                         MotionEvent.ACTION_DOWN -> { //초기 위치와 시간 기억
                             cordx = m.x
                             cordy = m.y
                             println("Action down....")
-                            //longClickHandler.postDelayed(longClickRunnable, LONGPRESS_TIMEOUT.toLong())
-                            longClickHandler.sendEmptyMessageAtTime(0, 7000)
+                            longClickHandler.sendEmptyMessageDelayed(0, LONGPRESS_TIMEOUT.toLong())
                             return true
                         }
 
                         MotionEvent.ACTION_UP -> { // 마우스 up
                             println("Action UP!!! ")
                             anim_zoomin.resume()
-                            //longClickHandler.removeCallbacks(longClickRunnable)
                             longClickHandler.removeMessages(0)
                             return true
                         }
@@ -109,13 +103,52 @@ class MainActivity : AppCompatActivity() {
 
                     return false
                 }
-            })
+            })*/
 
             container.addView(view)
             return view
         }
 
+        class MyGestureListener() : GestureDetector.SimpleOnGestureListener() {
+            private val SWIPE_MIN_DISTANCE = 150
+            private val SWIPE_MAX_OFF_PATH = 100
+            private val SWIPE_THRESHOLD_VELOCITY = 100
 
+            override fun onDown(e: MotionEvent?): Boolean {
+                return super.onDown(e)
+            }
+
+            override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+                if( e1 == null || e2 == null)   return false
+                val cordX = e2.x - e1.x
+                val cordY = e1.y - e2.y
+                println("swipe up")
+
+                if(Math.abs(cordY) < SWIPE_MAX_OFF_PATH && Math.abs(velocityX) >= SWIPE_THRESHOLD_VELOCITY && Math.abs(cordX) >= SWIPE_MIN_DISTANCE){
+                    if(cordX > 0){
+                        //swipe right
+                    }else{
+                        //swipe left
+                    }
+                }else if(Math.abs(cordX) < SWIPE_MAX_OFF_PATH && Math.abs(velocityY) >= SWIPE_THRESHOLD_VELOCITY && Math.abs(cordY) >= SWIPE_MIN_DISTANCE){
+                    if(cordY > 0){
+                        println("swipe up")
+                        //swipe up
+                    }else{
+                        //swipe down
+                        println("swipe down")
+                    }
+                }
+
+                return false
+
+            }
+
+            override fun onLongPress(e: MotionEvent?) {
+                println("longpress")
+                super.onLongPress(e)
+            }
+        }
 
 
     }
