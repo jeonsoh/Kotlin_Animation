@@ -24,6 +24,9 @@ import android.view.animation.LinearInterpolator
 
 class MainActivity2 : AppCompatActivity() {
 
+    companion object {
+        lateinit var animatorSet : AnimatorSet
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -37,23 +40,21 @@ class MainActivity2 : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
+                println("viewpager child count : " + m_viewpager.childCount)
+
                 var view = m_viewpager.getChildAt(position).findViewWithTag<ImageView>("imageview") as ImageView
                 var mprogressbar = m_viewpager.getChildAt(position).findViewWithTag<ProgressBar>("progressbar"+0)
 
-                println("??"+ view.javaClass)
-                println("??"+ mprogressbar.javaClass)
-
-                var anim_progressbar : ObjectAnimator = ObjectAnimator.ofInt(mprogressbar, "progress", 0, 100)
-                anim_progressbar.setDuration(7000)
-                anim_progressbar.setInterpolator(LinearInterpolator())
+                var anim_progressbar = ObjectAnimator.ofInt(mprogressbar, "progress", 0, 100).apply {
+                    setDuration(7000)
+                    setInterpolator(LinearInterpolator())
+                } //progressbar animation
 
                 var anim_zoomin = AnimatorInflater.loadAnimator(view.context, R.animator.zoom_in) as AnimatorSet  //property animation방식
                 anim_zoomin.setTarget(view)
+                //imageview animation
 
-                println("viewpager child count : " + m_viewpager.childCount)
-
-                //anim_zoomin.start()
-                var animatorSet : AnimatorSet = AnimatorSet()
+                animatorSet = AnimatorSet()
                 animatorSet.playTogether(anim_progressbar, anim_zoomin)
                 animatorSet.start()
             }
