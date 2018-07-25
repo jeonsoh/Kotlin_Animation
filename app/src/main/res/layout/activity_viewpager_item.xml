@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="10dp"
             android:layout_margin="10dp"
-            android:id="@+id/m_progresslayout_imageview"
+            android:id="@+id/m_progresslayout"
             android:layout_gravity="top|center_horizontal"
             android:orientation="horizontal"
             >

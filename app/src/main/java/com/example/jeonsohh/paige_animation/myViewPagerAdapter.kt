@@ -9,7 +9,6 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
-import kotlinx.android.synthetic.main.activity_viewpager_item.*
 
 
 class myViewPagerAdapter() : PagerAdapter() {
@@ -55,44 +54,29 @@ class myViewPagerAdapter() : PagerAdapter() {
         for( i in 0..subitemSize -1) {
             val progressBar = ProgressBar(container.context, null, android.R.attr.progressBarStyleHorizontal).apply {
                 max = 100
+                setTag("progressbar"+i)
             }
             val progressbarParams = LinearLayout.LayoutParams(container.measuredWidth / subitemSize, ViewGroup.LayoutParams.MATCH_PARENT). apply {
                 setMargins(10,0,10,0)
                 weight = 1F
             }
-            view.m_progresslayout_imageview!!.addView(progressBar,i, progressbarParams)
+            view.m_progresslayout!!.addView(progressBar,i, progressbarParams)
         }
-        println("child? " + view.m_progresslayout_imageview.childCount)
+        println("child? " + view.m_progresslayout.childCount)
 
-              /*  val mhandler = progressbarHandler(view,progressStatus)
-        Thread{
-            run {
-                progressStatus++
-                mhandler.sendMessage(Message())
-            }
-        }.start()*/
-
-       val progressbarTimer = object : CountDownTimer(7000,1000){
-            override fun onFinish() {
-                Toast.makeText(container.context, "finish first progress...", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onTick(p0: Long) {
-                progressStatus++
-                var temp = view.m_progresslayout_imageview.getChildAt(0) as ProgressBar
-                temp.setProgress(progressStatus*100/(7000/1000))
-
-            }
-
-        }
-        //progressbarTimer.start()
 
         view.m_viewpager_imageview.setOnLongClickListener(object : View.OnLongClickListener{
             override fun onLongClick(p0: View?): Boolean {
                 println("long click")
                 anim_zoomin.pause()
-                //progressbarAsync.cancel(true)
-             //   progressbarTimer.cancel()
+
+                   MainActivity.mprogressbarAsync.cancel(true)
+              //  MainActivity.mprogressbarTimer.cancel()
+
+         //       MainActivity.mprogressbarThread.pauseThread()
+         //       print("thread status ??" + MainActivity.mprogressbarThread.isInterrupted)
+        //        print("thread status ??" + MainActivity.mprogressbarThread.isAlive)
+
                 view.m_pausedlayout.visibility = View.VISIBLE
                 return true
             }
@@ -100,9 +84,6 @@ class myViewPagerAdapter() : PagerAdapter() {
 
         view.m_viewpager_imageview.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, m: MotionEvent?): Boolean {
-                var cordx: Float? = null
-                var cordy: Float? = null
-                var touchslop: Int = ViewConfiguration.get(v!!.context).scaledTouchSlop //drag범위 인식하는 기본값
 
                 when (m!!.action) {
                     MotionEvent.ACTION_DOWN -> { //초기 위치와 시간 기억
@@ -111,11 +92,18 @@ class myViewPagerAdapter() : PagerAdapter() {
                     MotionEvent.ACTION_UP -> { // 마우스 up
                         println("Action UP!!! ")
                         anim_zoomin.resume()
-                       // if(progressbarAsync.isCancelled()){
-                       //     progressbarAsync.execute()
 
-                       // }
-                       //   progressbarTimer.start()
+                //        if(MainActivity.mprogressbarAsync.isCancelled){
+                   //         MainActivity.mprogressbarAsync = MainActivity.progressAsyncTask(position)
+                            MainActivity.mprogressbarAsync.execute()
+                   //     }
+
+                 //       MainActivity.mprogressbarThread.resumeThread()
+                  //      print("thread status ??" + MainActivity.mprogressbarThread.isInterrupted)
+                   //     print("thread status ??" + MainActivity.mprogressbarThread.isAlive)
+
+                        //   progressbarTimer.start()
+
                         view.m_pausedlayout.visibility = View.INVISIBLE
                         return true
                     }
@@ -132,36 +120,8 @@ class myViewPagerAdapter() : PagerAdapter() {
         return view
     }
 
-  /*  class progressbarHandler(v:View, count : Int) : Handler() {
-        val view = v
-        var count = count
-        override fun handleMessage(msg: Message?) {
-            var temp = view.m_progresslayout_imageview.getChildAt(0) as ProgressBar
-            temp.setProgress(count)
-            Thread.sleep(100)
-            super.handleMessage(msg)
-        }
-    }*/
-
-    inner class progressAsyncTask : AsyncTask<Void, Void, Void>(){
-        var progressStatus = 0
-
-
-        override fun doInBackground(vararg p0: Void?): Void? {
-
-            while (progressStatus <= 100){
-                var temp = m_progresslayout_imageview.getChildAt(0) as ProgressBar
-                progressStatus++
-                temp.setProgress(progressStatus)
-                Thread.sleep(100)
-            }
-            return null
-        }
-
-        override fun onPostExecute(result: Void?) {
-            super.onPostExecute(result)
-        }
-
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        super.destroyItem(container, position, `object`)
     }
 
 }
