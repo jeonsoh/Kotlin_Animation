@@ -20,12 +20,14 @@ import java.io.Serializable
 import android.view.animation.DecelerateInterpolator
 import android.R.attr.animation
 import android.view.animation.LinearInterpolator
+import android.widget.LinearLayout
 
 
 class MainActivity2 : AppCompatActivity() {
 
     companion object {
         lateinit var animatorSet : AnimatorSet
+        var currentSubItem : Int = 0
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +45,7 @@ class MainActivity2 : AppCompatActivity() {
                 println("viewpager child count : " + m_viewpager.childCount)
 
                 var view = m_viewpager.getChildAt(position).findViewWithTag<ImageView>("imageview") as ImageView
-                var mprogressbar = m_viewpager.getChildAt(position).findViewWithTag<ProgressBar>("progressbar"+0)
+                var mprogressbar = m_viewpager.getChildAt(position).findViewWithTag<ProgressBar>("progressbar"+currentSubItem)
 
                 var anim_progressbar = ObjectAnimator.ofInt(mprogressbar, "progress", 0, 100).apply {
                     setDuration(7000)
@@ -57,6 +59,32 @@ class MainActivity2 : AppCompatActivity() {
                 animatorSet = AnimatorSet()
                 animatorSet.playTogether(anim_progressbar, anim_zoomin)
                 animatorSet.start()
+
+                currentSubItem = 0
+                animatorSet.addListener(object : Animator.AnimatorListener{
+                    override fun onAnimationRepeat(p0: Animator?) {
+                    }
+
+                    override fun onAnimationCancel(p0: Animator?) {
+                    }
+
+                    override fun onAnimationStart(p0: Animator?) {
+                    }
+
+                    override fun onAnimationEnd(p0: Animator?) {
+                     //   var childCount = m_viewpager.getChildAt(position).findViewById<LinearLayout>(R.id.m_progresslayout).childCount
+                        println("-----Child : " +m_viewpager.findViewById<LinearLayout>(R.id.m_progresslayout).javaClass)
+                        println("childCount : " + childCount)
+                        if (currentSubItem < childCount){
+                            currentSubItem++
+                        }else{
+                            currentSubItem = 0
+                        }
+                        animatorSet.start()
+
+                    }
+
+                })
             }
 
 
