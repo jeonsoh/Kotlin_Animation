@@ -46,12 +46,12 @@ class ViewerFragment : Fragment(){
 
         /* ProgressBar 만들기 */
         val subitemSize = items.subitem.size
-        for( i in 0..(subitemSize-1)) {
+        for( i in 0..(subitemSize)) {
             val progressBar = ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal).apply {
                 max = 100
                 setTag("progressbar"+i)
             }
-            val progressbarParams = LinearLayout.LayoutParams(progresslayout_viewpager!!.measuredWidth / subitemSize, ViewGroup.LayoutParams.MATCH_PARENT). apply {
+            val progressbarParams = LinearLayout.LayoutParams(progresslayout_viewpager!!.measuredWidth / subitemSize+1, ViewGroup.LayoutParams.MATCH_PARENT). apply {
                 setMargins(10,0,10,0)
                 weight = 1F
             }
@@ -91,15 +91,15 @@ class ViewerFragment : Fragment(){
             }
         })
 
-
     }
 
     fun animationStart() {
-    //    println("viewpager child count : " + viewpager_main.childCount)
 
         animatorSet = setAnimation(currentSubItem)
 
         animatorSet.addListener(object : Animator.AnimatorListener{
+
+            var childCount = progresslayout_viewpager.childCount
             override fun onAnimationRepeat(p0: Animator?) {
             }
 
@@ -108,20 +108,22 @@ class ViewerFragment : Fragment(){
 
             override fun onAnimationStart(p0: Animator?) {
                 Log.d( TAG, " === Start Animation ===  " )
-
+                if (currentSubItem in 1 .. childCount) {
+                    imageview_viewpager.setImageResource(items.subitem[currentSubItem - 1].main_image)
+                    m_textview_on_slidingdrawer.setText(items.subitem[currentSubItem - 1].main_text) //기사 내용. 수정
+                }
             }
 
             override fun onAnimationEnd(p0: Animator?) {
                 Log.d( TAG, " === End Animation ===  " )
 
-                Log.d( TAG, "current sub item num : " + currentSubItem)
-                var childCount = progresslayout_viewpager.childCount
-                Log.d( TAG,"-----Child : " +progresslayout_viewpager.javaClass)
-                Log.d( TAG,"childCount : " + childCount)
+           //     Log.d( TAG, "current sub item num : " + currentSubItem)
+           //     Log.d( TAG,"-----Child : " +progresslayout_viewpager.javaClass)
+           //     Log.d( TAG,"childCount : " + childCount)
                 if (currentSubItem < childCount-1){
                     currentSubItem++
-                    imageview_viewpager.setImageResource(items.subitem[currentSubItem].main_image)
                     animationStart()
+
                }else{
                     currentSubItem = 0
                 }
@@ -149,5 +151,15 @@ class ViewerFragment : Fragment(){
         anim_zoomin.playTogether(anim_progressbar)
 
         return anim_zoomin
+    }
+
+    fun clearAnimation(){
+        Log.d( TAG, " === Clear Animation ===  " )
+
+        currentSubItem = 0
+        imageview_viewpager.animate().cancel()
+        for(i in 0 .. items.subitem.size) {
+            (progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar" + i) as ProgressBar).animate().cancel()
+        }
     }
 }

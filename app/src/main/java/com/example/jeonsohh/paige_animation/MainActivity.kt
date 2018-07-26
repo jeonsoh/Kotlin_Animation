@@ -7,13 +7,16 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.widget.ProgressBar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_viewpager_item.*
 import java.io.Serializable
 
 
 class MainActivity : AppCompatActivity() {
 
     var mAdapter: ViewPagerAdapter? = null
+    var checkIsFirst = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,10 +56,19 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
+                if(checkIsFirst && positionOffset == 0f && positionOffsetPixels == 0){
+                    onPageSelected(0)
+                    checkIsFirst = false
+                }
 
+            }
             override fun onPageSelected(position: Int) {
-                var fragment = mAdapter?.getItem(position) as ViewerFragment
+                var fragment = mAdapter?.getItem(position) as ViewerFragment //item[position]
+                if(!checkIsFirst) {
+                    for (i in 0..items.size - 1) {
+                        items[i].clearAnimation()
+                    }
+                }
                 fragment.animationStart()
             }
 
@@ -65,6 +77,7 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
 
     class ViewPagerAdapter(val items: MutableList<ViewerFragment>, fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
