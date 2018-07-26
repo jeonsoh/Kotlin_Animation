@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/linear_interpolator"
     android:ordering="together">
     <objectAnimator
         android:propertyName="scaleX"
         android:valueFrom="1"
         android:valueTo="1.5"
         android:duration="7000"
-        android:repeatCount="-1"
+        android:repeatCount="1"
         />
     <!-- repeatcount = -1 means infinitely... -->
     <objectAnimator
@@ -14,6 +15,6 @@
         android:valueFrom="1"
         android:valueTo="1.5"
         android:duration="7000"
-        android:repeatCount="-1"
+        android:repeatCount="1"
         />
 </set>
