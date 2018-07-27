@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
 
 class ViewerFragment : Fragment(){
     var currentSubItem : Int = 0
-    lateinit var animatorSet : AnimatorSet
+    var animatorSet : AnimatorSet? = null
     lateinit var items : MainActivity.bigItem
 
     companion object {
@@ -63,7 +63,7 @@ class ViewerFragment : Fragment(){
         imageview_viewpager.setOnLongClickListener(object : View.OnLongClickListener{
             override fun onLongClick(p0: View?): Boolean {
                 println("long click")
-                animatorSet.pause()
+                animatorSet?.pause()
                 view.m_pausedlayout.visibility = View.VISIBLE
                 return true
             }
@@ -75,21 +75,21 @@ class ViewerFragment : Fragment(){
 
                 when (m!!.action) {
                     MotionEvent.ACTION_DOWN -> { //초기 위치와 시간 기억
-
                     }
                     MotionEvent.ACTION_UP -> { // 마우스 up
                         println("Action UP!!! ")
-                        animatorSet.resume()
+                        animatorSet?.resume()
                         view.m_pausedlayout.visibility = View.INVISIBLE
                         return true
                     }
                     MotionEvent.ACTION_MOVE -> { //일정범위
-                        // println("Action Move!!! ")
+
                     }
                 }
                 return false
             }
         })
+
 
     }
 
@@ -97,7 +97,7 @@ class ViewerFragment : Fragment(){
 
         animatorSet = setAnimation(currentSubItem)
 
-        animatorSet.addListener(object : Animator.AnimatorListener{
+        animatorSet?.addListener(object : Animator.AnimatorListener{
 
             var childCount = progresslayout_viewpager.childCount
             override fun onAnimationRepeat(p0: Animator?) {
@@ -132,21 +132,22 @@ class ViewerFragment : Fragment(){
             }
 
         })
-        animatorSet.start()
+        animatorSet?.start()
 
     }
+    var mProgressbar : ProgressBar? = null
 
     fun setAnimation(currentSub : Int) : AnimatorSet {
-        var mImageview = imageview_viewpager
-        var mProgressbar = progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar"+currentSub) as ProgressBar
+      //  var mImageview = imageview_viewpager
+        mProgressbar = progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar"+currentSub) as ProgressBar
 
         var anim_progressbar = ObjectAnimator.ofInt(mProgressbar, "progress", 0, 100).apply {
             setDuration(7000)
             setInterpolator(LinearInterpolator())
         } //progressbar animation
 
-        var anim_zoomin = AnimatorInflater.loadAnimator(mImageview.context, R.animator.zoom_in) as AnimatorSet  //property animation방식
-        anim_zoomin.setTarget(mImageview)
+        var anim_zoomin = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.zoom_in) as AnimatorSet  //property animation방식
+        anim_zoomin.setTarget(imageview_viewpager)
 
         anim_zoomin.playTogether(anim_progressbar)
 
@@ -157,9 +158,14 @@ class ViewerFragment : Fragment(){
         Log.d( TAG, " === Clear Animation ===  " )
 
         currentSubItem = 0
-        imageview_viewpager.animate().cancel()
+        animatorSet?.cancel()
+        animatorSet?.removeAllListeners()
+//        imageview_viewpager.animate().cancel()
         for(i in 0 .. items.subitem.size) {
-            (progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar" + i) as ProgressBar).animate().cancel()
+            mProgressbar?.animate()?.cancel()
+            progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar"+i).setProgress(0)
         }
+        imageview_viewpager.setImageResource(items.main_image) //head이미지
+
     }
 }
