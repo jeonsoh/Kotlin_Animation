@@ -78,12 +78,21 @@ class MainActivity : AppCompatActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun changeCurrentPage(event : ViewpagerEvent){
-        if(viewpager_main.currentItem < viewpager_main.childCount-1){
-            viewpager_main.setCurrentItem(++viewpager_main.currentItem)
-        }else if(viewpager_main.currentItem == viewpager_main.childCount-1){
-            viewpager_main.setCurrentItem(0)
+        if(event.direction == 1){ //right
+            if(viewpager_main.currentItem < viewpager_main.childCount-1){
+                viewpager_main.setCurrentItem(++viewpager_main.currentItem)
+            }else if(viewpager_main.currentItem == viewpager_main.childCount-1){
+                viewpager_main.setCurrentItem(0)
+            }
+        }else if(event.direction == 0){
+            if(viewpager_main.currentItem > 0){
+                viewpager_main.setCurrentItem(--viewpager_main.currentItem)
+            }else if(viewpager_main.currentItem == 0){
+                viewpager_main.setCurrentItem(viewpager_main.childCount-1)
 
+            }
         }
+
     }
 
     override fun onStart() {

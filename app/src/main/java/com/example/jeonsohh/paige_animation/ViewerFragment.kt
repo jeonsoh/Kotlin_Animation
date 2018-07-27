@@ -8,10 +8,7 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -25,6 +22,7 @@ class ViewerFragment : Fragment(){
     var mAnimatorSet : AnimatorSet? = null
     lateinit var items : MainActivity.bigItem
     var mProgressbar : ProgressBar? = null
+    var mIsLongCLick : Boolean = false
 
     companion object {
         val TAG = "ViewerFragment"
@@ -61,29 +59,52 @@ class ViewerFragment : Fragment(){
         println("child? " + view.progresslayout_viewpager.childCount)
 
         /* longClick 애니메이션 정지*/
-        imageview_viewpager.setOnLongClickListener(object : View.OnLongClickListener{
-            override fun onLongClick(p0: View?): Boolean {
-                println("long click")
-                mAnimatorSet?.pause()
-                view.m_pausedlayout.visibility = View.VISIBLE
-                return true
-            }
-        })
+//        imageview_viewpager.setOnLongClickListener(object : View.OnLongClickListener{
+//            override fun onLongClick(p0: View?): Boolean {
+//                println("long click")
+//                mIsLongCLick = true
+//                mAnimatorSet?.pause()
+//                view.m_pausedlayout.visibility = View.VISIBLE
+//                return true
+//            }
+//        })
 
         /* onTouch 애니메이션 재시작 */
         imageview_viewpager.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, m: MotionEvent?): Boolean {
 
                 when (m!!.action) {
-                    MotionEvent.ACTION_DOWN -> { //초기 위치와 시간 기억
-                    }
-                    MotionEvent.ACTION_UP -> { // 마우스 up
-                        println("Action UP!!! ")
-                        mAnimatorSet?.resume()
-                        view.m_pausedlayout.visibility = View.INVISIBLE
+                    MotionEvent.ACTION_DOWN -> {
+                        println("ACTION_DOWN")
+
                         return true
                     }
-                    MotionEvent.ACTION_MOVE -> { //일정범위
+                    MotionEvent.ACTION_UP -> {
+                        println("Action UP!!! ")
+                        if(mIsLongCLick){ //long click
+                            mAnimatorSet?.resume()
+                            view.m_pausedlayout.visibility = View.INVISIBLE
+                            mIsLongCLick = false
+                        }else{ //short click
+                             if(m.x > imageview_viewpager.width/2){ //right
+//                                if(currentSubItem < subitemSize-1){
+//                                    currentSubItem++
+//                                    imageview_viewpager.setImageResource(items.subitem[currentSubItem - 1].main_image)
+//                                    m_textview_on_slidingdrawer.setText(items.subitem[currentSubItem - 1].main_text) //기사 내용. 수정
+//                                }
+                            }else{ //left
+//                                 if(currentSubItem > 0){
+//                                     currentSubItem--
+//                                     imageview_viewpager.setImageResource(items.subitem[currentSubItem - 1].main_image)
+//                                     m_textview_on_slidingdrawer.setText(items.subitem[currentSubItem - 1].main_text) //기사 내용. 수정
+//                                 }
+                             }
+                        }
+
+                        return true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        println("ACTION_MOVE")
 
                     }
                 }
@@ -127,7 +148,7 @@ class ViewerFragment : Fragment(){
 
                }else{
                     currentSubItem = 0
-                    EventBus.getDefault().post(ViewpagerEvent())
+                    EventBus.getDefault().post(ViewpagerEvent(1))
                 }
 
 
