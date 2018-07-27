@@ -15,15 +15,16 @@ import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_viewpager_item.*
 import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
+import org.greenrobot.eventbus.EventBus
 
 
 class ViewerFragment : Fragment(){
     var currentSubItem : Int = 0
-    var animatorSet : AnimatorSet? = null
+    var mAnimatorSet : AnimatorSet? = null
     lateinit var items : MainActivity.bigItem
+    var mProgressbar : ProgressBar? = null
 
     companion object {
         val TAG = "ViewerFragment"
@@ -63,7 +64,7 @@ class ViewerFragment : Fragment(){
         imageview_viewpager.setOnLongClickListener(object : View.OnLongClickListener{
             override fun onLongClick(p0: View?): Boolean {
                 println("long click")
-                animatorSet?.pause()
+                mAnimatorSet?.pause()
                 view.m_pausedlayout.visibility = View.VISIBLE
                 return true
             }
@@ -78,7 +79,7 @@ class ViewerFragment : Fragment(){
                     }
                     MotionEvent.ACTION_UP -> { // 마우스 up
                         println("Action UP!!! ")
-                        animatorSet?.resume()
+                        mAnimatorSet?.resume()
                         view.m_pausedlayout.visibility = View.INVISIBLE
                         return true
                     }
@@ -95,9 +96,9 @@ class ViewerFragment : Fragment(){
 
     fun animationStart() {
 
-        animatorSet = setAnimation(currentSubItem)
+        mAnimatorSet = setAnimation(currentSubItem)
 
-        animatorSet?.addListener(object : Animator.AnimatorListener{
+        mAnimatorSet?.addListener(object : Animator.AnimatorListener{
 
             var childCount = progresslayout_viewpager.childCount
             override fun onAnimationRepeat(p0: Animator?) {
@@ -126,16 +127,16 @@ class ViewerFragment : Fragment(){
 
                }else{
                     currentSubItem = 0
+                    EventBus.getDefault().post(ViewpagerEvent())
                 }
 
 
             }
 
         })
-        animatorSet?.start()
+        mAnimatorSet?.start()
 
     }
-    var mProgressbar : ProgressBar? = null
 
     fun setAnimation(currentSub : Int) : AnimatorSet {
       //  var mImageview = imageview_viewpager
@@ -158,8 +159,8 @@ class ViewerFragment : Fragment(){
         Log.d( TAG, " === Clear Animation ===  " )
 
         currentSubItem = 0
-        animatorSet?.cancel()
-        animatorSet?.removeAllListeners()
+        mAnimatorSet?.cancel()
+        mAnimatorSet?.removeAllListeners()
 //        imageview_viewpager.animate().cancel()
         for(i in 0 .. items.subitem.size) {
             mProgressbar?.animate()?.cancel()

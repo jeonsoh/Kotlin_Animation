@@ -1,22 +1,22 @@
 package com.example.jeonsohh.paige_animation
 
-import android.animation.AnimatorSet
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.widget.ProgressBar
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_viewpager_item.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.Serializable
 
 
 class MainActivity : AppCompatActivity() {
 
     var mAdapter: ViewPagerAdapter? = null
-    var checkIsFirst = true
+    var mIsFirst = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,15 +56,15 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                if(checkIsFirst && positionOffset == 0f && positionOffsetPixels == 0){
+                if(mIsFirst && positionOffset == 0f && positionOffsetPixels == 0){
                     onPageSelected(0)
-                    checkIsFirst = false
+                    mIsFirst = false
                 }
 
             }
             override fun onPageSelected(position: Int) {
                 var fragment = mAdapter?.getItem(position) as ViewerFragment //item[position]
-                if(!checkIsFirst) {
+                if(!mIsFirst) {
                     for (i in 0..items.size - 1) {
                         items[i].clearAnimation()
                     }
@@ -72,12 +72,29 @@ class MainActivity : AppCompatActivity() {
                 fragment.animationStart()
             }
 
-
         })
-
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun changeCurrentPage(event : ViewpagerEvent){
+        if(viewpager_main.currentItem < viewpager_main.childCount-1){
+            viewpager_main.setCurrentItem(++viewpager_main.currentItem)
+        }else if(viewpager_main.currentItem == viewpager_main.childCount-1){
+            viewpager_main.setCurrentItem(0)
+
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 
     class ViewPagerAdapter(val items: MutableList<ViewerFragment>, fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
 
