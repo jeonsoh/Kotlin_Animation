@@ -24,6 +24,7 @@ class ViewerFragment : Fragment(){
     lateinit var items : MainActivity.bigItem
     var mProgressbar : ProgressBar? = null
     var mIsLongCLick : Boolean = false
+    var isCanceled : Boolean = false
 
     companion object {
         val TAG = "ViewerFragment"
@@ -81,7 +82,7 @@ class ViewerFragment : Fragment(){
                         return true
                     }
                     MotionEvent.ACTION_UP -> {
-                        println("Action UP!!! ")
+                        println("=====Action UP!!!====== ")
                         if(mIsLongCLick){ //long click
                             mAnimatorSet?.resume()
                             view.m_pausedlayout.visibility = View.INVISIBLE
@@ -96,11 +97,20 @@ class ViewerFragment : Fragment(){
                             }else{ //left
                                  println("short click : left"+ currentSubItem+" , "+subitemSize)
 
-                                 if(currentSubItem > 0){
-//                                     currentSubItem--
-//                                     imageview_viewpager.setImageResource(items.subitem[currentSubItem - 1].main_image)
-//                                     m_textview_on_slidingdrawer.setText(items.subitem[currentSubItem - 1].main_text) //기사 내용. 수정
-                                 }
+
+                                     var temp = currentSubItem
+
+                                     if(temp == 0){//change left viewpager
+                                         currentSubItem = 0
+                                         EventBus.getDefault().post(ViewpagerEvent(0))
+                                     }else if(temp > 0 && temp < subitemSize+1){
+                                         clearAnimation()
+                                         animationStart()
+                                         for(i in 1 .. temp-1){ //0부터0까지.. 포함안하게!
+                                            println("???END ???")
+                                            mAnimatorSet?.end()
+                                        }
+                                        }
                              }
                         }
 
@@ -140,21 +150,25 @@ class ViewerFragment : Fragment(){
             }
 
             override fun onAnimationEnd(p0: Animator?) {
-                Log.d( TAG, " === End Animation ===  " )
+                if(!isCanceled) {
+                    Log.d(TAG, " === End Animation ===  ")
 
-           //     Log.d( TAG, "current sub item num : " + currentSubItem)
-           //     Log.d( TAG,"-----Child : " +progresslayout_viewpager.javaClass)
-           //     Log.d( TAG,"childCount : " + childCount)
-                if (currentSubItem < childCount-1){
-                    currentSubItem++
-                    animationStart()
+                    Log.d(TAG, " === isCanceled " + isCanceled + "/ userVisibleHint ===  " + userVisibleHint)
 
-               }else{
-                    currentSubItem = 0
-                    EventBus.getDefault().post(ViewpagerEvent(1))
+                    //     Log.d( TAG, "current sub item num : " + currentSubItem)
+                    //     Log.d( TAG,"-----Child : " +progresslayout_viewpager.javaClass)
+                    //     Log.d( TAG,"childCount : " + childCount)
+                    if (currentSubItem < childCount - 1) {
+                        currentSubItem++
+                        animationStart()
+
+                    } else {
+                        currentSubItem = 0
+                        EventBus.getDefault().post(ViewpagerEvent(1))
+                    }
+
                 }
-
-
+                isCanceled = false
             }
 
         })
@@ -183,7 +197,9 @@ class ViewerFragment : Fragment(){
         Log.d( TAG, " === Clear Animation ===  " )
 
         currentSubItem = 0
+        isCanceled = true
         mAnimatorSet?.cancel()
+        isCanceled = false
         mAnimatorSet?.removeAllListeners()
 //        imageview_viewpager.animate().cancel()
         for(i in 0 .. items.subitem.size) {
