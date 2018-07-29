@@ -12,6 +12,7 @@ import android.view.*
 import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_viewpager_item.*
 import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
 import org.greenrobot.eventbus.EventBus
@@ -87,17 +88,19 @@ class ViewerFragment : Fragment(){
                             mIsLongCLick = false
                         }else{ //short click
                              if(m.x > imageview_viewpager.width/2){ //right
-//                                if(currentSubItem < subitemSize-1){
-//                                    currentSubItem++
-//                                    imageview_viewpager.setImageResource(items.subitem[currentSubItem - 1].main_image)
-//                                    m_textview_on_slidingdrawer.setText(items.subitem[currentSubItem - 1].main_text) //기사 내용. 수정
-//                                }
+                                 println("short click : right "+ currentSubItem+" , "+subitemSize)
+                                // Toast.makeText(activity,"short click : right", Toast.LENGTH_LONG).show()
+                                if(currentSubItem < subitemSize+1){
+                                    mAnimatorSet?.end()
+                                }
                             }else{ //left
-//                                 if(currentSubItem > 0){
+                                 println("short click : left"+ currentSubItem+" , "+subitemSize)
+
+                                 if(currentSubItem > 0){
 //                                     currentSubItem--
 //                                     imageview_viewpager.setImageResource(items.subitem[currentSubItem - 1].main_image)
 //                                     m_textview_on_slidingdrawer.setText(items.subitem[currentSubItem - 1].main_text) //기사 내용. 수정
-//                                 }
+                                 }
                              }
                         }
 
