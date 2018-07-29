@@ -203,6 +203,7 @@ class ViewerFragment : Fragment(){
             progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar"+i).setProgress(0)
         }
         imageview_viewpager.setImageResource(items.main_image) //head이미지
-
+        textview_viewpager.setText(items.main_text) //기사 head
+        m_textview_on_slidingdrawer.setText(items.main_text) //기사 내용. 수정
     }
 }
