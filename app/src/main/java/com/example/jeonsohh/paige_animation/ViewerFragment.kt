@@ -58,18 +58,18 @@ class ViewerFragment : Fragment(){
             }
             progresslayout_viewpager!!.addView(progressBar,i, progressbarParams)
         }
-        println("child? " + view.progresslayout_viewpager.childCount)
+        Log.d(TAG, "child? " + view.progresslayout_viewpager.childCount)
 
         /* longClick 애니메이션 정지*/
-//        imageview_viewpager.setOnLongClickListener(object : View.OnLongClickListener{
-//            override fun onLongClick(p0: View?): Boolean {
-//                println("long click")
-//                mIsLongCLick = true
-//                mAnimatorSet?.pause()
-//                view.m_pausedlayout.visibility = View.VISIBLE
-//                return true
-//            }
-//        })
+        imageview_viewpager.setOnLongClickListener(object : View.OnLongClickListener{
+            override fun onLongClick(p0: View?): Boolean {
+                println("long click")
+                mIsLongCLick = true
+                mAnimatorSet?.pause()
+                view.m_pausedlayout.visibility = View.VISIBLE
+                return true
+            }
+        })
 
         /* onTouch 애니메이션 재시작 */
         imageview_viewpager.setOnTouchListener(object : View.OnTouchListener {
@@ -77,26 +77,24 @@ class ViewerFragment : Fragment(){
 
                 when (m!!.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        println("ACTION_DOWN")
+                        Log.d(TAG, "ACTION_DOWN")
 
-                        return true
+                        return false
                     }
                     MotionEvent.ACTION_UP -> {
-                        println("=====Action UP!!!====== ")
-                        if(mIsLongCLick){ //long click
+                        Log.d(TAG, "=====Action UP!!!====== ")
+                        if(mIsLongCLick){ //long click, animation restart
                             mAnimatorSet?.resume()
                             view.m_pausedlayout.visibility = View.INVISIBLE
                             mIsLongCLick = false
                         }else{ //short click
-                             if(m.x > imageview_viewpager.width/2){ //right
-                                 println("short click : right "+ currentSubItem+" , "+subitemSize)
-                                // Toast.makeText(activity,"short click : right", Toast.LENGTH_LONG).show()
+                             if(m.x > imageview_viewpager.width/2){ //right click
+                                 Log.e(TAG , "short click : right "+ currentSubItem+" , "+subitemSize)
                                 if(currentSubItem < subitemSize+1){
                                     mAnimatorSet?.end()
                                 }
-                            }else{ //left
-                                 println("short click : left"+ currentSubItem+" , "+subitemSize)
-
+                            }else{ //left click
+                                 Log.d(TAG, "short click : left"+ currentSubItem+" , "+subitemSize)
 
                                      var temp = currentSubItem
 
@@ -114,7 +112,7 @@ class ViewerFragment : Fragment(){
                              }
                         }
 
-                        return true
+                        return false
                     }
                     MotionEvent.ACTION_MOVE -> {
                         println("ACTION_MOVE")
@@ -152,8 +150,6 @@ class ViewerFragment : Fragment(){
             override fun onAnimationEnd(p0: Animator?) {
                 if(!isCanceled) {
                     Log.d(TAG, " === End Animation ===  ")
-
-                    Log.d(TAG, " === isCanceled " + isCanceled + "/ userVisibleHint ===  " + userVisibleHint)
 
                     //     Log.d( TAG, "current sub item num : " + currentSubItem)
                     //     Log.d( TAG,"-----Child : " +progresslayout_viewpager.javaClass)
