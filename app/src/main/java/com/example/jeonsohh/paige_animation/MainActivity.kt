@@ -33,6 +33,13 @@ class MainActivity : AppCompatActivity() {
                 smallItem(R.drawable.image2_bridge2, "image2_bridge2"))
         var bridge = bigItem(R.drawable.image2, "image2", subBridge)
 
+        var subCat = listOf<smallItem>(smallItem(R.drawable.image3_cat1, "image3_cat1"),
+                smallItem(R.drawable.image3_cat2, "image3_cat2"),
+                smallItem(R.drawable.image3_cat3, "image3_cat3"),
+                smallItem(R.drawable.image3_cat4, "image4_cat4"),
+                smallItem(R.drawable.image3_cat5, "image3_cat5"))
+        var cat = bigItem(R.drawable.image3, "image3", subCat)
+
         var items: MutableList<ViewerFragment> = arrayListOf()
 
         val bundle1 = Bundle()
@@ -47,10 +54,15 @@ class MainActivity : AppCompatActivity() {
         fragment2.arguments = bundle2
         items.add(fragment2)
 
+        val bundle3 = Bundle()
+        val fragment3 = ViewerFragment()
+        bundle3.putSerializable("items", cat)
+        fragment3.arguments = bundle3
+        items.add(fragment3)
 
         mAdapter = ViewPagerAdapter(items, supportFragmentManager)
         viewpager_main.adapter = mAdapter
-        viewpager_main.offscreenPageLimit = 2
+        viewpager_main.offscreenPageLimit = items.size
         viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(state: Int) {
             }

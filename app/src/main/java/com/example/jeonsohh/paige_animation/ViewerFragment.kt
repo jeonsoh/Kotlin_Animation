@@ -66,12 +66,12 @@ class ViewerFragment : Fragment(){
                 println("long click")
                 mIsLongCLick = true
                 mAnimatorSet?.pause()
-                view.m_pausedlayout.visibility = View.VISIBLE
+                m_pausedlayout.visibility = View.VISIBLE
                 return true
             }
         })
 
-        /* onTouch 애니메이션 재시작 */
+        /* onTouch 애니메이션 재시작, 좌우 화면전환 */
         imageview_viewpager.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, m: MotionEvent?): Boolean {
 
@@ -89,7 +89,7 @@ class ViewerFragment : Fragment(){
                             mIsLongCLick = false
                         }else{ //short click
                              if(m.x > imageview_viewpager.width/2){ //right click
-                                 Log.e(TAG , "short click : right "+ currentSubItem+" , "+subitemSize)
+                                 Log.d(TAG , "short click : right "+ currentSubItem+" , "+subitemSize)
                                 if(currentSubItem < subitemSize+1){
                                     mAnimatorSet?.end()
                                 }
@@ -104,7 +104,7 @@ class ViewerFragment : Fragment(){
                                      }else if(temp > 0 && temp < subitemSize+1){
                                          clearAnimation()
                                          animationStart()
-                                         for(i in 1 .. temp-1){ //0부터0까지.. 포함안하게!
+                                         for(i in 1 .. temp-1){
                                             println("???END ???")
                                             mAnimatorSet?.end()
                                         }
