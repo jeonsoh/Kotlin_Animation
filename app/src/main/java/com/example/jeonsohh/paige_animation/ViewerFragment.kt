@@ -12,18 +12,17 @@ import android.view.*
 import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_viewpager_item.*
 import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
 import org.greenrobot.eventbus.EventBus
 
 
 class ViewerFragment : Fragment(){
-    var currentSubItem : Int = 0
+    var mCurrentProgressbar : Int = 0
     var mAnimatorSet : AnimatorSet? = null
     lateinit var items : MainActivity.bigItem
     var mProgressbar : ProgressBar? = null
-    var mIsLongCLick : Boolean = false
+    var isLongCLick : Boolean = false
     var isCanceled : Boolean = false
 
     companion object {
@@ -64,7 +63,7 @@ class ViewerFragment : Fragment(){
         imageview_viewpager.setOnLongClickListener(object : View.OnLongClickListener{
             override fun onLongClick(p0: View?): Boolean {
                 println("long click")
-                mIsLongCLick = true
+                isLongCLick = true
                 mAnimatorSet?.pause()
                 m_pausedlayout.visibility = View.VISIBLE
                 return true
@@ -83,23 +82,23 @@ class ViewerFragment : Fragment(){
                     }
                     MotionEvent.ACTION_UP -> {
                         Log.d(TAG, "=====Action UP!!!====== ")
-                        if(mIsLongCLick){ //long click, animation restart
+                        if(isLongCLick){ //long click, animation restart
                             mAnimatorSet?.resume()
                             view.m_pausedlayout.visibility = View.INVISIBLE
-                            mIsLongCLick = false
+                            isLongCLick = false
                         }else{ //short click
                              if(m.x > imageview_viewpager.width/2){ //right click
-                                 Log.d(TAG , "short click : right "+ currentSubItem+" , "+subitemSize)
-                                if(currentSubItem < subitemSize+1){
+                                 Log.d(TAG , "short click : right "+ mCurrentProgressbar+" , "+subitemSize)
+                                if(mCurrentProgressbar < subitemSize+1){
                                     mAnimatorSet?.end()
                                 }
                             }else{ //left click
-                                 Log.d(TAG, "short click : left"+ currentSubItem+" , "+subitemSize)
+                                 Log.d(TAG, "short click : left"+ mCurrentProgressbar+" , "+subitemSize)
 
-                                     var temp = currentSubItem
+                                     var temp = mCurrentProgressbar
 
                                      if(temp == 0){//change left viewpager
-                                         currentSubItem = 0
+                                         mCurrentProgressbar = 0
                                          EventBus.getDefault().post(ViewpagerEvent(0))
                                      }else if(temp > 0 && temp < subitemSize+1){
                                          clearAnimation()
@@ -128,7 +127,7 @@ class ViewerFragment : Fragment(){
 
     fun animationStart() {
 
-        mAnimatorSet = setAnimation(currentSubItem)
+        mAnimatorSet = setAnimation(mCurrentProgressbar)
 
         mAnimatorSet?.addListener(object : Animator.AnimatorListener{
 
@@ -141,9 +140,9 @@ class ViewerFragment : Fragment(){
 
             override fun onAnimationStart(p0: Animator?) {
                 Log.d( TAG, " === Start Animation ===  " )
-                if (currentSubItem in 1 .. childCount) {
-                    imageview_viewpager.setImageResource(items.subitem[currentSubItem - 1].main_image)
-                    m_textview_on_slidingdrawer.setText(items.subitem[currentSubItem - 1].main_text) //기사 내용. 수정
+                if (mCurrentProgressbar in 1 .. childCount) {
+                    imageview_viewpager.setImageResource(items.subitem[mCurrentProgressbar - 1].main_image)
+                    m_textview_on_slidingdrawer.setText(items.subitem[mCurrentProgressbar - 1].main_text) //기사 내용. 수정
                 }
             }
 
@@ -154,12 +153,12 @@ class ViewerFragment : Fragment(){
                     //     Log.d( TAG, "current sub item num : " + currentSubItem)
                     //     Log.d( TAG,"-----Child : " +progresslayout_viewpager.javaClass)
                     //     Log.d( TAG,"childCount : " + childCount)
-                    if (currentSubItem < childCount - 1) {
-                        currentSubItem++
+                    if (mCurrentProgressbar < childCount - 1) {
+                        mCurrentProgressbar++
                         animationStart()
 
                     } else {
-                        currentSubItem = 0
+                        mCurrentProgressbar = 0
                         EventBus.getDefault().post(ViewpagerEvent(1))
                     }
 
@@ -192,7 +191,7 @@ class ViewerFragment : Fragment(){
     fun clearAnimation(){
         Log.d( TAG, " === Clear Animation ===  " )
 
-        currentSubItem = 0
+        mCurrentProgressbar = 0
         isCanceled = true
         mAnimatorSet?.cancel()
         isCanceled = false
