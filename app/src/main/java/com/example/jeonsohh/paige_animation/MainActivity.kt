@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         var subCat = listOf<smallItem>(smallItem(R.drawable.image3_cat1, "image3_cat1"),
                 smallItem(R.drawable.image3_cat2, "image3_cat2"),
                 smallItem(R.drawable.image3_cat3, "image3_cat3"),
-                smallItem(R.drawable.image3_cat4, "image4_cat4"),
+                smallItem(R.drawable.image3_cat4, "image3_cat4"),
                 smallItem(R.drawable.image3_cat5, "image3_cat5"))
         var cat = bigItem(R.drawable.image3, "image3", subCat)
 

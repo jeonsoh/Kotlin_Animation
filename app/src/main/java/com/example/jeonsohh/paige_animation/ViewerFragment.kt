@@ -41,7 +41,8 @@ class ViewerFragment : Fragment(){
         Log.e(TAG, items.main_text)
 
         imageview_viewpager.setImageResource(items.main_image) //head이미지
-        textview_viewpager.setText(items.main_text) //기사 head
+        textview_viewpager_head.setText(items.main_text) //기사 head
+        textview_viewpager_sub.setText(items.main_text) //기사 sub
         m_textview_on_slidingdrawer.setText(items.main_text) //기사 내용. 수정
 
         /* ProgressBar 만들기 */
@@ -142,6 +143,7 @@ class ViewerFragment : Fragment(){
                 Log.d( TAG, " === Start Animation ===  " )
                 if (mCurrentProgressbar in 1 .. childCount) {
                     imageview_viewpager.setImageResource(items.subitem[mCurrentProgressbar - 1].main_image)
+                    textview_viewpager_sub.setText(items.subitem[mCurrentProgressbar - 1].main_text) //기사 sub
                     m_textview_on_slidingdrawer.setText(items.subitem[mCurrentProgressbar - 1].main_text) //기사 내용. 수정
                 }
             }
@@ -175,10 +177,18 @@ class ViewerFragment : Fragment(){
       //  var mImageview = imageview_viewpager
         mProgressbar = progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar"+currentSub) as ProgressBar
 
-        var anim_progressbar = ObjectAnimator.ofInt(mProgressbar, "progress", 0, 100).apply {
-            setDuration(7000)
-            setInterpolator(LinearInterpolator())
-        } //progressbar animation
+//        var anim_progressbar = ObjectAnimator.ofInt(mProgressbar, "progress", 0, 100).apply {
+//            setDuration(7000)
+//            setInterpolator(LinearInterpolator())
+//        } //progressbar animation
+
+        var anim_progressbar = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.linear_progress)  //property animation방식
+        anim_progressbar.setTarget(mProgressbar)
+
+//        var anim_textview = ObjectAnimator.ofInt(textview_viewpager_head, "progress", 0, 100).apply {
+//            setDuration(3000)
+//            setInterpolator(LinearInterpolator())
+//        }
 
         var anim_zoomin = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.zoom_in) as AnimatorSet  //property animation방식
         anim_zoomin.setTarget(imageview_viewpager)
@@ -202,7 +212,8 @@ class ViewerFragment : Fragment(){
             progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar"+i).setProgress(0)
         }
         imageview_viewpager.setImageResource(items.main_image) //head이미지
-        textview_viewpager.setText(items.main_text) //기사 head
+        textview_viewpager_head.setText(items.main_text) //기사 head
+        textview_viewpager_sub.setText(items.main_text)
         m_textview_on_slidingdrawer.setText(items.main_text) //기사 내용. 수정
     }
 }

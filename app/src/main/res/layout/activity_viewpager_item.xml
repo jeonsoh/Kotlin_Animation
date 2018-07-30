@@ -15,18 +15,32 @@
             android:scaleType="fitXY">
         </android.support.v7.widget.AppCompatImageView>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/textview_viewpager"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="50dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorBasicText"
-            />
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textview_viewpager_head"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorBasicText"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textview_viewpager_sub"
+                android:textSize="20sp"
+                android:textColor="@color/colorBasicText"
+                />
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
