@@ -12,6 +12,7 @@ import android.view.*
 import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_viewpager_item.*
 import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
 import org.greenrobot.eventbus.EventBus
@@ -23,6 +24,7 @@ class ViewerFragment : Fragment(){
     lateinit var items : MainActivity.bigItem
     var mProgressbar : ProgressBar? = null
     var mIsLongCLick : Boolean = false
+    var isCanceled : Boolean = false
 
     companion object {
         val TAG = "ViewerFragment"
@@ -56,18 +58,18 @@ class ViewerFragment : Fragment(){
             }
             progresslayout_viewpager!!.addView(progressBar,i, progressbarParams)
         }
-        println("child? " + view.progresslayout_viewpager.childCount)
+        Log.d(TAG, "child? " + view.progresslayout_viewpager.childCount)
 
         /* longClick 애니메이션 정지*/
-//        imageview_viewpager.setOnLongClickListener(object : View.OnLongClickListener{
-//            override fun onLongClick(p0: View?): Boolean {
-//                println("long click")
-//                mIsLongCLick = true
-//                mAnimatorSet?.pause()
-//                view.m_pausedlayout.visibility = View.VISIBLE
-//                return true
-//            }
-//        })
+        imageview_viewpager.setOnLongClickListener(object : View.OnLongClickListener{
+            override fun onLongClick(p0: View?): Boolean {
+                println("long click")
+                mIsLongCLick = true
+                mAnimatorSet?.pause()
+                view.m_pausedlayout.visibility = View.VISIBLE
+                return true
+            }
+        })
 
         /* onTouch 애니메이션 재시작 */
         imageview_viewpager.setOnTouchListener(object : View.OnTouchListener {
@@ -75,33 +77,42 @@ class ViewerFragment : Fragment(){
 
                 when (m!!.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        println("ACTION_DOWN")
+                        Log.d(TAG, "ACTION_DOWN")
 
-                        return true
+                        return false
                     }
                     MotionEvent.ACTION_UP -> {
-                        println("Action UP!!! ")
-                        if(mIsLongCLick){ //long click
+                        Log.d(TAG, "=====Action UP!!!====== ")
+                        if(mIsLongCLick){ //long click, animation restart
                             mAnimatorSet?.resume()
                             view.m_pausedlayout.visibility = View.INVISIBLE
                             mIsLongCLick = false
                         }else{ //short click
-                             if(m.x > imageview_viewpager.width/2){ //right
-//                                if(currentSubItem < subitemSize-1){
-//                                    currentSubItem++
-//                                    imageview_viewpager.setImageResource(items.subitem[currentSubItem - 1].main_image)
-//                                    m_textview_on_slidingdrawer.setText(items.subitem[currentSubItem - 1].main_text) //기사 내용. 수정
-//                                }
-                            }else{ //left
-//                                 if(currentSubItem > 0){
-//                                     currentSubItem--
-//                                     imageview_viewpager.setImageResource(items.subitem[currentSubItem - 1].main_image)
-//                                     m_textview_on_slidingdrawer.setText(items.subitem[currentSubItem - 1].main_text) //기사 내용. 수정
-//                                 }
+                             if(m.x > imageview_viewpager.width/2){ //right click
+                                 Log.e(TAG , "short click : right "+ currentSubItem+" , "+subitemSize)
+                                if(currentSubItem < subitemSize+1){
+                                    mAnimatorSet?.end()
+                                }
+                            }else{ //left click
+                                 Log.d(TAG, "short click : left"+ currentSubItem+" , "+subitemSize)
+
+                                     var temp = currentSubItem
+
+                                     if(temp == 0){//change left viewpager
+                                         currentSubItem = 0
+                                         EventBus.getDefault().post(ViewpagerEvent(0))
+                                     }else if(temp > 0 && temp < subitemSize+1){
+                                         clearAnimation()
+                                         animationStart()
+                                         for(i in 1 .. temp-1){ //0부터0까지.. 포함안하게!
+                                            println("???END ???")
+                                            mAnimatorSet?.end()
+                                        }
+                                        }
                              }
                         }
 
-                        return true
+                        return false
                     }
                     MotionEvent.ACTION_MOVE -> {
                         println("ACTION_MOVE")
@@ -137,21 +148,23 @@ class ViewerFragment : Fragment(){
             }
 
             override fun onAnimationEnd(p0: Animator?) {
-                Log.d( TAG, " === End Animation ===  " )
+                if(!isCanceled) {
+                    Log.d(TAG, " === End Animation ===  ")
 
-           //     Log.d( TAG, "current sub item num : " + currentSubItem)
-           //     Log.d( TAG,"-----Child : " +progresslayout_viewpager.javaClass)
-           //     Log.d( TAG,"childCount : " + childCount)
-                if (currentSubItem < childCount-1){
-                    currentSubItem++
-                    animationStart()
+                    //     Log.d( TAG, "current sub item num : " + currentSubItem)
+                    //     Log.d( TAG,"-----Child : " +progresslayout_viewpager.javaClass)
+                    //     Log.d( TAG,"childCount : " + childCount)
+                    if (currentSubItem < childCount - 1) {
+                        currentSubItem++
+                        animationStart()
 
-               }else{
-                    currentSubItem = 0
-                    EventBus.getDefault().post(ViewpagerEvent(1))
+                    } else {
+                        currentSubItem = 0
+                        EventBus.getDefault().post(ViewpagerEvent(1))
+                    }
+
                 }
-
-
+                isCanceled = false
             }
 
         })
@@ -180,7 +193,9 @@ class ViewerFragment : Fragment(){
         Log.d( TAG, " === Clear Animation ===  " )
 
         currentSubItem = 0
+        isCanceled = true
         mAnimatorSet?.cancel()
+        isCanceled = false
         mAnimatorSet?.removeAllListeners()
 //        imageview_viewpager.animate().cancel()
         for(i in 0 .. items.subitem.size) {
@@ -188,6 +203,7 @@ class ViewerFragment : Fragment(){
             progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar"+i).setProgress(0)
         }
         imageview_viewpager.setImageResource(items.main_image) //head이미지
-
+        textview_viewpager.setText(items.main_text) //기사 head
+        m_textview_on_slidingdrawer.setText(items.main_text) //기사 내용. 수정
     }
 }
