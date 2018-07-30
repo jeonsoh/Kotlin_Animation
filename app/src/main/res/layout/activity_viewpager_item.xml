@@ -25,7 +25,7 @@
             android:layout_marginRight="20dp"
             android:textSize="30sp"
             android:textStyle="bold"
-            android:textColor="@color/colorBasicTextview"
+            android:textColor="@color/colorBasicText"
             />
 
         <LinearLayout
@@ -41,7 +41,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:layout_height="30dp"
             android:layout_gravity="center_horizontal"
             android:background="@color/colorPausedBar"
             android:orientation="horizontal"
@@ -51,7 +51,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/colorBasicText"
                 android:layout_centerInParent="true"
                 android:text="PAUSED"/>
 
@@ -65,22 +65,22 @@
         android:layout_height="match_parent"
         android:id="@+id/m_slidingdrawer"
         android:orientation="vertical"
-        android:handle="@id/m_handle"
-        android:content="@id/m_content"
+        android:handle="@id/handle"
+        android:content="@id/content"
        >
 
         <ImageButton
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:id="@+id/m_handle"
+            android:id="@+id/handle"
             android:src="@drawable/ic_expand_less"
-            android:background="#00FF0000"
+            android:background="@color/colorAlpha"
             />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/m_content"
-            android:background="#FFFFFF">
+            android:id="@+id/content"
+            android:background="@color/colorBasicBackground">
 
             <TextView
                 android:layout_width="wrap_content"
