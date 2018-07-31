@@ -3,8 +3,7 @@
        android:propertyName="backgroundColor"
        android:valueFrom="@color/colorAlpha"
        android:valueTo="@color/colorAccent"
-       android:duration="3000"
-       android:startOffset="4000"
+       android:duration="7000"
        android:valueType="colorType">
 
 </objectAnimator>

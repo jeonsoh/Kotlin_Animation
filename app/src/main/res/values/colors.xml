@@ -6,5 +6,6 @@
     <color name="colorPausedBar">#80000000</color>
     <color name="colorBasicText">#FFFFFF</color>
     <color name="colorBasicBackground">#FFFFFF</color>
+    <color name="colorAlphaBackground">#00FFFFFF</color>
     <color name="colorAlpha">#00FF0000</color>
 </resources>

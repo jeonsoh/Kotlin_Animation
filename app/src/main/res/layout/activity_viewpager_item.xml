@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -74,34 +75,37 @@
 
     </FrameLayout>
 
-    <SlidingDrawer
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/m_slidingdrawer"
+        android:id="@+id/bottom_sheet"
         android:orientation="vertical"
-        android:handle="@id/handle"
-        android:content="@id/content"
+        app:behavior_peekHeight="50dp"
+        app:behavior_hideable="false"
+        app:layout_behavior="@string/bottom_sheet_behavior"
        >
 
         <ImageButton
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:id="@+id/handle"
             android:src="@drawable/ic_expand_less"
-            android:background="@color/colorAlpha"
+            android:background="@color/colorAlphaBackground"
+            android:id="@+id/btn_bottomsheet"
             />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/content"
             android:background="@color/colorBasicBackground">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/m_textview_on_slidingdrawer"/>
+                android:id="@+id/m_textview_on_slidingdrawer"
+                android:background="@color/colorBasicBackground"/>
 
         </LinearLayout>
-    </SlidingDrawer>
 
-</RelativeLayout>
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>
