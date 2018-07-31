@@ -6,15 +6,17 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.*
-import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import kotlinx.android.synthetic.main.activity_viewpager_item.*
 import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
 import org.greenrobot.eventbus.EventBus
 import android.animation.ObjectAnimator
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.AccelerateInterpolator
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.TransitionDrawable
+import android.view.animation.*
 
 
 class ViewerFragment : Fragment(){
@@ -174,37 +176,13 @@ class ViewerFragment : Fragment(){
     }
 
     fun setAnimation(currentSub : Int) : AnimatorSet {
-      //  var mImageview = imageview_viewpager
         mProgressbar = progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar"+currentSub) as ProgressBar
-
-//        var anim_progressbar = ObjectAnimator.ofInt(mProgressbar, "progress", 0, 100).apply {
-//            setDuration(7000)
-//            setInterpolator(LinearInterpolator())
-//        } //progressbar animation
 
         var anim_progressbar = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.linear_progress)  //property animation방식
         anim_progressbar.setTarget(mProgressbar)
 
-        var anim_textview = ValueAnimator.ofArgb(R.color.colorAlpha, R.color.colorAccent);
-        anim_textview.setDuration(7000)
-        anim_textview.addUpdateListener(object : ValueAnimator.AnimatorUpdateListener{
-            override fun onAnimationUpdate(p0: ValueAnimator?) {
-                textview_viewpager_head.setBackgroundColor(p0?.getAnimatedValue() as Int)
-            }
-
-        })
-
-//        var argb = ArgbEvaluator()
-//        var endcolor = argb.evaluate(, R.color.colorPrimaryDark, R.color.colorAccent)
-//        var anim_textview = ObjectAnimator.ofObject(imageview_viewpager.context, "backgroundColor", argb, R.color.colorAccent)
-//        anim_textview.setDuration(7000)
-//        anim_textview.setInterpolator(AccelerateInterpolator())
-//        anim_textview.setTarget(textview_viewpager_head)
-//
-
-//        var anim_textview = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.linear_background)  //property animation방식
-//        anim_textview.setInterpolator(AccelerateDecelerateInterpolator())
-//        anim_textview.setTarget(textview_viewpager_head)
+        var anim_textview= AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.linear_background)  //property animation방식
+        anim_textview.setTarget(textview_viewpager_head)
 
         var anim_zoomin = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.zoom_in) as AnimatorSet  //property animation방식
         anim_zoomin.setTarget(imageview_viewpager)

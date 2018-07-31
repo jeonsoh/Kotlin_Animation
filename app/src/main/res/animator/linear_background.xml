@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<set xmlns:android="http://schemas.android.com/apk/res/android">
-    <objectAnimator
-        android:propertyName="backgroundColor"
-        android:valueFrom="@color/colorAlpha"
-        android:valueTo="@color/colorAccent"
-        android:duration="7000"
-        android:valueType="colorType"
-        />
-</set>
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+       android:propertyName="backgroundColor"
+       android:valueFrom="@color/colorAlpha"
+       android:valueTo="@color/colorAccent"
+       android:duration="3000"
+       android:startOffset="4000"
+       android:valueType="colorType">
+
+</objectAnimator>
+
+
+
+
