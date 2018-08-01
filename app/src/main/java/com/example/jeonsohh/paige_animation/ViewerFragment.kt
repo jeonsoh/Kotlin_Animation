@@ -63,16 +63,16 @@ class ViewerFragment : Fragment() {
         }
         Log.d(TAG, "child? " + view.progresslayout_viewpager.childCount)
 
-        //btn_bottomsheet.background.alpha = 0
         /* Bottom Sheet Listener */
         var mBottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         mBottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 if(mBottomSheetBehavior.state == BottomSheetBehavior.STATE_DRAGGING){
                     var alpha = Integer.toString(Math.round(slideOffset*255), 16)
                     if(alpha.length == 1) alpha = "0"+alpha
                     var newcolor = "#"+alpha + "FFFFFF"
-                    btn_bottomsheet.background = ColorDrawable(Color.parseColor(newcolor))
+                    btn_bottomsheet.setBackgroundColor(Color.parseColor(newcolor))
                 }
             }
 
@@ -89,7 +89,17 @@ class ViewerFragment : Fragment() {
                     mAnimatorSet?.resume()
                 }
             }
+        })
 
+        /* Bottom Sheet Click Listener */
+        btn_bottomsheet.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(p0: View?) {
+                if(mBottomSheetBehavior.state  == BottomSheetBehavior.STATE_COLLAPSED){
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED //open
+                }else if(mBottomSheetBehavior.state  == BottomSheetBehavior.STATE_EXPANDED){
+                    mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED //close
+                }
+            }
         })
 
         /* longClick 애니메이션 정지*/
