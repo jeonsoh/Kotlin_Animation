@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun changeCurrentPage(event : ViewpagerEvent){
+    fun changeCurrentPage(event : ViewPagerEvent){
         if(event.direction == 1){ //right
             if(viewpager_main.currentItem < viewpager_main.childCount-1){
                 viewpager_main.setCurrentItem(++viewpager_main.currentItem)

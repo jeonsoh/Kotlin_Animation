@@ -11,11 +11,7 @@ import android.widget.ProgressBar
 import kotlinx.android.synthetic.main.activity_viewpager_item.*
 import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
 import org.greenrobot.eventbus.EventBus
-import android.animation.ObjectAnimator
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.TransitionDrawable
 import android.support.design.widget.BottomSheetBehavior
 import android.view.animation.*
 
@@ -46,7 +42,7 @@ class ViewerFragment : Fragment() {
         imageview_viewpager.setImageResource(items.main_image) //head이미지
         textview_viewpager_head.setText(items.main_text) //기사 head
         textview_viewpager_sub.setText(items.main_text) //기사 sub
-        m_textview_on_slidingdrawer.setText(items.main_text) //기사 내용. 수정
+        textview_bottomsheet.setText(items.main_text) //기사 내용. 수정
 
         /* ProgressBar 만들기 */
         val subitemSize = items.subitem.size
@@ -141,7 +137,7 @@ class ViewerFragment : Fragment() {
 
                                 if (temp == 0) {//change left viewpager
                                     mCurrentProgressbar = 0
-                                    EventBus.getDefault().post(ViewpagerEvent(0))
+                                    EventBus.getDefault().post(ViewPagerEvent(0))
                                 } else if (temp > 0 && temp < subitemSize + 1) {
                                     clearAnimation()
                                     animationStart()
@@ -181,7 +177,7 @@ class ViewerFragment : Fragment() {
                 if (mCurrentProgressbar in 1..childCount) {
                     imageview_viewpager.setImageResource(items.subitem[mCurrentProgressbar - 1].main_image)
                     textview_viewpager_sub.setText(items.subitem[mCurrentProgressbar - 1].main_text) //기사 sub
-                    m_textview_on_slidingdrawer.setText(items.subitem[mCurrentProgressbar - 1].main_text) //기사 내용. 수정
+                    textview_bottomsheet.setText(items.subitem[mCurrentProgressbar - 1].main_text) //기사 내용. 수정
                 }
             }
 
@@ -198,7 +194,7 @@ class ViewerFragment : Fragment() {
 
                     } else {
                         mCurrentProgressbar = 0
-                        EventBus.getDefault().post(ViewpagerEvent(1))
+                        EventBus.getDefault().post(ViewPagerEvent(1))
                     }
 
                 }
@@ -244,6 +240,6 @@ class ViewerFragment : Fragment() {
         imageview_viewpager.setImageResource(items.main_image) //head이미지
         textview_viewpager_head.setText(items.main_text) //기사 head
         textview_viewpager_sub.setText(items.main_text)
-        m_textview_on_slidingdrawer.setText(items.main_text) //기사 내용. 수정
+        textview_bottomsheet.setText(items.main_text) //기사 내용. 수정
     }
 }
