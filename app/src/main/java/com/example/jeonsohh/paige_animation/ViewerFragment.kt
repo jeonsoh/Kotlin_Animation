@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
 import org.greenrobot.eventbus.EventBus
 import android.graphics.Color
 import android.support.design.widget.BottomSheetBehavior
+import android.support.v7.widget.RecyclerView
 import android.view.animation.*
 
 
@@ -69,6 +70,7 @@ class ViewerFragment : Fragment() {
                     if(alpha.length == 1) alpha = "0"+alpha
                     var newcolor = "#"+alpha + "FFFFFF"
                     btn_bottomsheet.setBackgroundColor(Color.parseColor(newcolor))
+                    mAnimatorSet?.pause()
                 }
             }
 
@@ -98,6 +100,32 @@ class ViewerFragment : Fragment() {
             }
         })
 
+
+        /* Fling listener */
+        val SWIPE_MIN_DISTANCE = 120;
+        val SWIPE_THRESHOLD_VELOCITY = 200;
+        var detector = GestureDetector(object : GestureDetector.SimpleOnGestureListener() {
+            override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+                Log.d("Gesture Detector", "On FLING")
+
+                if(e1!!.getY() - e2!!.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                    if(mBottomSheetBehavior.state  == BottomSheetBehavior.STATE_COLLAPSED){
+                        mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED //open
+                        imageview_viewpager.isEnabled = false
+                    }
+                    return false; // Bottom to top
+                }  else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+                    if(mBottomSheetBehavior.state  == BottomSheetBehavior.STATE_EXPANDED){
+                        mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED //close
+                        imageview_viewpager.isEnabled = true
+                    }
+                    return false; // Top to bottom
+                }
+                return false;
+            }
+
+        })
+
         /* longClick 애니메이션 정지*/
         imageview_viewpager.setOnLongClickListener(object : View.OnLongClickListener {
             override fun onLongClick(p0: View?): Boolean {
@@ -110,48 +138,52 @@ class ViewerFragment : Fragment() {
         })
 
         /* onTouch 애니메이션 재시작, 좌우 화면전환 */
-        imageview_viewpager.setOnTouchListener(object : View.OnTouchListener {
+        var imgListener = imageview_viewpager.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, m: MotionEvent?): Boolean {
-
-                when (m!!.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        Log.d(TAG, "ACTION_DOWN")
-                        return false
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        Log.d(TAG, "=====Action UP!!!====== ")
-                        if (isLongCLick) { //long click, animation restart
-                            mAnimatorSet?.resume()
-                            view.m_pausedlayout.visibility = View.INVISIBLE
-                            isLongCLick = false
-                        } else { //short click
-                            if (m.x > imageview_viewpager.width / 2) { //right click
-                                Log.d(TAG, "short click : right " + mCurrentProgressbar + " , " + subitemSize)
-                                if (mCurrentProgressbar < subitemSize + 1) {
-                                    mAnimatorSet?.end()
-                                }
-                            } else { //left click
-                                Log.d(TAG, "short click : left" + mCurrentProgressbar + " , " + subitemSize)
-
-                                var temp = mCurrentProgressbar
-
-                                if (temp == 0) {//change left viewpager
-                                    mCurrentProgressbar = 0
-                                    EventBus.getDefault().post(ViewPagerEvent(0))
-                                } else if (temp > 0 && temp < subitemSize + 1) {
-                                    clearAnimation()
-                                    animationStart()
-                                    for (i in 1..temp - 1) {
-                                        println("???END ???")
+                if(detector.onTouchEvent(m)){
+                    Log.d(TAG, "Gesture Detector")
+                    return true
+                }else {
+                    when (m!!.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            Log.d(TAG, "ACTION_DOWN")
+                            return false
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            Log.d(TAG, "=====Action UP!!!====== ")
+                            if (isLongCLick) { //long click, animation restart
+                                mAnimatorSet?.resume()
+                                view.m_pausedlayout.visibility = View.INVISIBLE
+                                isLongCLick = false
+                            } else { //short click
+                                if (m.x > imageview_viewpager.width / 2) { //right click
+                                    Log.d(TAG, "short click : right " + mCurrentProgressbar + " , " + subitemSize)
+                                    if (mCurrentProgressbar < subitemSize + 1) {
                                         mAnimatorSet?.end()
+                                    }
+                                } else { //left click
+                                    Log.d(TAG, "short click : left" + mCurrentProgressbar + " , " + subitemSize)
+
+                                    var temp = mCurrentProgressbar
+
+                                    if (temp == 0) {//change left viewpager
+                                        mCurrentProgressbar = 0
+                                        EventBus.getDefault().post(ViewPagerEvent(0))
+                                    } else if (temp > 0 && temp < subitemSize + 1) {
+                                        clearAnimation()
+                                        animationStart()
+                                        for (i in 1..temp - 1) {
+                                            println("???END ???")
+                                            mAnimatorSet?.end()
+                                        }
                                     }
                                 }
                             }
+                            return false
                         }
-                        return false
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-                        println("ACTION_MOVE")
+                        MotionEvent.ACTION_MOVE -> {
+                            //  println("ACTION_MOVE")
+                        }
                     }
                 }
                 return false
