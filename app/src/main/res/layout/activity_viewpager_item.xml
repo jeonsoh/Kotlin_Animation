@@ -7,7 +7,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/framelayout_viewpager">
 
         <android.support.v7.widget.AppCompatImageView
             android:layout_width="match_parent"
@@ -16,18 +17,19 @@
             android:scaleType="fitXY">
         </android.support.v7.widget.AppCompatImageView>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="50dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:orientation="vertical"
+            android:id="@+id/textviewgroup"
             >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:id="@+id/textview_viewpager_head"
                 android:textSize="30sp"
                 android:textStyle="bold"
@@ -36,11 +38,14 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_below="@id/textview_viewpager_head"
                 android:id="@+id/textview_viewpager_sub"
                 android:textSize="20sp"
                 android:textColor="@color/colorBasicText"
                 />
-        </LinearLayout>
+        </RelativeLayout>
 
 
         <LinearLayout

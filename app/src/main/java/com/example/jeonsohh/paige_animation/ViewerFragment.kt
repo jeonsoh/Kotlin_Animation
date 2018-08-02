@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.*
-import android.widget.LinearLayout
-import android.widget.ProgressBar
 import kotlinx.android.synthetic.main.activity_viewpager_item.*
 import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
 import org.greenrobot.eventbus.EventBus
@@ -15,6 +13,7 @@ import android.graphics.Color
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.widget.RecyclerView
 import android.view.animation.*
+import android.widget.*
 
 
 class ViewerFragment : Fragment() {
@@ -80,11 +79,14 @@ class ViewerFragment : Fragment() {
                     btn_bottomsheet.setBackgroundColor(Color.parseColor("#FFFFFF"))
                     btn_bottomsheet.setImageResource(R.drawable.ic_expand_next)
                     mAnimatorSet?.pause()
+                    imageview_viewpager.isEnabled = false
                 }
                 if(newState == BottomSheetBehavior.STATE_COLLAPSED){//4
                     btn_bottomsheet.setBackgroundColor(Color.parseColor("#00FFFFFF"))
                     btn_bottomsheet.setImageResource(R.drawable.ic_expand_less)
                     mAnimatorSet?.resume()
+                    imageview_viewpager.isEnabled = true
+
                 }
             }
         })
@@ -111,13 +113,11 @@ class ViewerFragment : Fragment() {
                 if(e1!!.getY() - e2!!.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                     if(mBottomSheetBehavior.state  == BottomSheetBehavior.STATE_COLLAPSED){
                         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED //open
-                     //   imageview_viewpager.isEnabled = false
                     }
                     return false; // Bottom to top
                 }  else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                     if(mBottomSheetBehavior.state  == BottomSheetBehavior.STATE_EXPANDED){
                         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED //close
-                       // imageview_viewpager.isEnabled = true
                     }
                     return false; // Top to bottom
                 }
@@ -138,7 +138,7 @@ class ViewerFragment : Fragment() {
         })
 
         /* onTouch 애니메이션 재시작, 좌우 화면전환 */
-        var imgListener = imageview_viewpager.setOnTouchListener(object : View.OnTouchListener {
+        imageview_viewpager.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, m: MotionEvent?): Boolean {
                 if(detector.onTouchEvent(m)){
                     Log.d(TAG, "Gesture Detector")
@@ -208,8 +208,8 @@ class ViewerFragment : Fragment() {
                 Log.d(TAG, " === Start Animation ===  ")
                 if (mCurrentProgressbar in 1..childCount) {
                     imageview_viewpager.setImageResource(items.subitem[mCurrentProgressbar - 1].main_image)
-                    textview_viewpager_sub.setText(items.subitem[mCurrentProgressbar - 1].main_text) //기사 sub
-                    textview_bottomsheet.setText(items.subitem[mCurrentProgressbar - 1].main_text) //기사 내용. 수정
+                    textview_viewpager_sub.setText(items.subitem[mCurrentProgressbar - 1].main_text)
+                    textview_bottomsheet.setText(items.subitem[mCurrentProgressbar - 1].main_text)
                 }
             }
 
@@ -217,9 +217,6 @@ class ViewerFragment : Fragment() {
                 if (!isCanceled) {
                     Log.d(TAG, " === End Animation ===  ")
 
-                    //     Log.d( TAG, "current sub item num : " + currentSubItem)
-                    //     Log.d( TAG,"-----Child : " +progresslayout_viewpager.javaClass)
-                    //     Log.d( TAG,"childCount : " + childCount)
                     if (mCurrentProgressbar < childCount - 1) {
                         mCurrentProgressbar++
                         animationStart()
@@ -241,15 +238,27 @@ class ViewerFragment : Fragment() {
     fun setAnimation(currentSub: Int): AnimatorSet {
         mProgressbar = progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar" + currentSub) as ProgressBar
 
-        var anim_progressbar = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.linear_progress)  //property animation방식
-        anim_progressbar.setTarget(mProgressbar)
+        var anim_progressbar = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.linear_progress).apply {
+            setTarget(mProgressbar)
+        }
 
-        var anim_textview = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.linear_background)  //property animation방식
-        anim_textview.setTarget(textview_viewpager_head)
-        anim_textview.setInterpolator(AccelerateDecelerateInterpolator())
+//        var anim_textview = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.linear_background).apply {
+//            setTarget(textview_viewpager_head)
+//            setInterpolator(AccelerateDecelerateInterpolator())
+//        }
 
-        var anim_zoomin = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.zoom_in) as AnimatorSet  //property animation방식
-        anim_zoomin.setTarget(imageview_viewpager)
+        var view = TextView(activity)
+        var params = RelativeLayout.LayoutParams(10, textviewgroup.height)
+        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT)
+        view.layoutParams = params
+        view.setBackgroundResource(R.color.colorAccent)
+        textviewgroup!!.addView(view)
+        var anim_textview = (AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.translate))
+        anim_textview.setTarget(view)
+
+        var anim_zoomin = (AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.zoom_in) as AnimatorSet).apply {
+            setTarget(imageview_viewpager)
+        }
 
         anim_zoomin.playTogether(anim_progressbar, anim_textview)
 
@@ -264,11 +273,12 @@ class ViewerFragment : Fragment() {
         mAnimatorSet?.cancel()
         isCanceled = false
         mAnimatorSet?.removeAllListeners()
-//        imageview_viewpager.animate().cancel()
+
         for (i in 0..items.subitem.size) {
             mProgressbar?.animate()?.cancel()
             progresslayout_viewpager!!.findViewWithTag<ProgressBar>("progressbar" + i).setProgress(0)
         }
+
         imageview_viewpager.setImageResource(items.main_image) //head이미지
         textview_viewpager_head.setText(items.main_text) //기사 head
         textview_viewpager_sub.setText(items.main_text)
