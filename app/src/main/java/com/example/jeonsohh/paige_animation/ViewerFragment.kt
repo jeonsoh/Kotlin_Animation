@@ -111,13 +111,13 @@ class ViewerFragment : Fragment() {
                 if(e1!!.getY() - e2!!.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                     if(mBottomSheetBehavior.state  == BottomSheetBehavior.STATE_COLLAPSED){
                         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED //open
-                        imageview_viewpager.isEnabled = false
+                     //   imageview_viewpager.isEnabled = false
                     }
                     return false; // Bottom to top
                 }  else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                     if(mBottomSheetBehavior.state  == BottomSheetBehavior.STATE_EXPANDED){
                         mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED //close
-                        imageview_viewpager.isEnabled = true
+                       // imageview_viewpager.isEnabled = true
                     }
                     return false; // Top to bottom
                 }
