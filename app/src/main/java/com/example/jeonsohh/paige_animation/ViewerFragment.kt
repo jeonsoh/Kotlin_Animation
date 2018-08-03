@@ -11,8 +11,6 @@ import kotlinx.android.synthetic.main.activity_viewpager_item.view.*
 import org.greenrobot.eventbus.EventBus
 import android.graphics.Color
 import android.support.design.widget.BottomSheetBehavior
-import android.support.v7.widget.RecyclerView
-import android.view.animation.*
 import android.widget.*
 
 
@@ -23,6 +21,7 @@ class ViewerFragment : Fragment() {
     var mProgressbar: ProgressBar? = null
     var isLongCLick: Boolean = false
     var isCanceled: Boolean = false
+    lateinit var mTextview : TextView
 
     companion object {
         val TAG = "ViewerFragment"
@@ -228,6 +227,8 @@ class ViewerFragment : Fragment() {
 
                 }
                 isCanceled = false
+                textviewgroup.removeView(textviewgroup.findViewWithTag<TextView>("textview_for_animation"))
+
             }
 
         })
@@ -242,19 +243,17 @@ class ViewerFragment : Fragment() {
             setTarget(mProgressbar)
         }
 
-//        var anim_textview = AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.linear_background).apply {
-//            setTarget(textview_viewpager_head)
-//            setInterpolator(AccelerateDecelerateInterpolator())
-//        }
-
-        var view = TextView(activity)
+        /* 애니메이션을 위한 뷰 생성*/
+        mTextview = TextView(activity)
         var params = RelativeLayout.LayoutParams(10, textviewgroup.height)
         params.addRule(RelativeLayout.ALIGN_PARENT_LEFT)
-        view.layoutParams = params
-        view.setBackgroundResource(R.color.colorAccent)
-        textviewgroup!!.addView(view)
-        var anim_textview = (AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.translate))
-        anim_textview.setTarget(view)
+        mTextview.layoutParams = params
+        mTextview.setBackgroundResource(R.color.colorAccent)
+        mTextview.setTag("textview_for_animation")
+        textviewgroup!!.addView(mTextview)
+
+        var anim_textview = (AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.scale_background))
+        anim_textview.setTarget(mTextview)
 
         var anim_zoomin = (AnimatorInflater.loadAnimator(imageview_viewpager.context, R.animator.zoom_in) as AnimatorSet).apply {
             setTarget(imageview_viewpager)
@@ -273,6 +272,8 @@ class ViewerFragment : Fragment() {
         mAnimatorSet?.cancel()
         isCanceled = false
         mAnimatorSet?.removeAllListeners()
+
+        textviewgroup.removeView(textviewgroup.findViewWithTag<TextView>("textview_for_animation"))
 
         for (i in 0..items.subitem.size) {
             mProgressbar?.animate()?.cancel()
